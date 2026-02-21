@@ -1,0 +1,43 @@
+services:
+  openclaw-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.vps
+    image: openclaw:vps
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR:-./data/openclaw}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR:-./data/workspace}:/home/node/.openclaw/workspace
+    ports:
+      - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+    init: true
+    restart: unless-stopped
+
+# Compose override for VPS: build from Dockerfile.vps, bind to lan, persist config/workspace.
+# On the VPS:
+#   1. mkdir -p /opt/openclaw/config /opt/openclaw/workspace && chown -R 1000:1000 /opt/openclaw
+#   2. echo "OPENCLAW_GATEWAY_TOKEN=$(openssl rand -hex 32)" >> .env
+#   3. echo "OPENCLAW_CONFIG_DIR=/opt/openclaw/config" >> .env
+#   4. echo "OPENCLAW_WORKSPACE_DIR=/opt/openclaw/workspace" >> .env
+#   5. docker compose -f docker-compose.vps.yml build && docker compose -f docker-compose.vps.yml up -d
+
+services:
+  openclaw-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.vps
+    image: openclaw:vps
+    environment:
+      HOME: /home/node
+      TERM: xterm-256color
+      OPENCLAW_GATEWAY_TOKEN: ${OPENCLAW_GATEWAY_TOKEN}
+    volumes:
+      - ${OPENCLAW_CONFIG_DIR:-./data/openclaw}:/home/node/.openclaw
+      - ${OPENCLAW_WORKSPACE_DIR:-./data/workspace}:/home/node/.openclaw/workspace
+    ports:
+      - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+    init: true
+    restart: unless-stopped
